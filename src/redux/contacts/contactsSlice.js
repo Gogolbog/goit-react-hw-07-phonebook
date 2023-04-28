@@ -1,38 +1,58 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import { contactsInitialState } from './initial';
+import {
+  createContactsThunk,
+  deleteContactsThunk,
+  getContactsThunk,
+} from 'redux/thunk';
 
-// export const contactsSlice = createSlice({
-//   name: 'contacts',
-//   initialState: contactsInitialState,
-//   reducers: {
-//     addContact(state, action) {
-//       return [...state, action.payload];
-//     },
-//     deleteContact(state, action) {
-//       const id = action.payload;
-//       return state.filter(contact => contact.id !== id);
-//     },
-//   },
-// });
+const STATUS = {
+  PENDING: 'pending',
+  FULFILLED: 'fulfilled',
+  REJECTED: 'rejected',
+};
+
+const arrThunk = [createContactsThunk, deleteContactsThunk, getContactsThunk];
+
+const typeOfThunk = type => arrThunk.map(el => el[type]);
+
+const handelPending = state => {
+  state.isLoading = true;
+};
+
+const handleFulfilled = state => {
+  state.isLoading = false;
+  state.error = '';
+};
+
+const handelFulfilledGet = (state, { payload }) => {
+  state.contacts = payload;
+};
+const handelFulfilledCreate = (state, { payload }) => {
+  state.items.push(payload);
+};
+const handelFulfilledDel = (state, { payload }) => {
+  state.items = state.items.filter(contact => contact.id !== payload.id);
+};
+
+const handelRejected = (state, { payload }) => {
+  state.isLoading = false;
+  state.error = payload;
+};
 
 export const contactsSlice = createSlice({
   name: 'contacts',
   initialState: contactsInitialState,
   extraReducers: builder => {
+    const { PENDING, FULFILLED, REJECTED } = STATUS;
     builder
-      .addCase(getContactsThunk.pending, (state, action) => {
-        state.isLoading = true;
-      })
-      .addCase(getContactsThunk.fulfilled, (state, { payload }) => {
-        state.isLoading = false;
-        state.contacts = payload;
-        state.error = '';
-      })
-      .addCase(getContactsThunk.rejected, (state, { payload }) => {
-        state.isLoading = false;
-        state.error = payload;
-      });
+      .addCase(getContactsThunk.fulfilled, handelFulfilledGet)
+      .addCase(createContactsThunk.fulfilled, handelFulfilledCreate)
+      .addCase(deleteContactsThunk.fulfilled, handelFulfilledDel)
+      .addMatcher(isAnyOf(...typeOfThunk(PENDING)), handelPending)
+      .addMatcher(isAnyOf(...typeOfThunk(REJECTED)), handelRejected)
+      .addMatcher(isAnyOf(...typeOfThunk(FULFILLED)), handleFulfilled);
   },
 });
 
-export const { addContact, deleteContact } = contactsSlice.actions;
+export const contactsReducer = contactsSlice.reducer;
