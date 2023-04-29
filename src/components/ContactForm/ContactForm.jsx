@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Form, Input, Label } from './ContactFormStyled';
 import { useDispatch, useSelector } from 'react-redux';
 import { createContactsThunk } from 'redux/thunk';
