@@ -2,7 +2,6 @@ import { nanoid } from 'nanoid';
 import React, { useEffect, useState } from 'react';
 import { Button, Form, Input, Label } from './ContactFormStyled';
 import { useDispatch, useSelector } from 'react-redux';
-import { getContacts } from 'redux/contactsAPI';
 import { createContactsThunk } from 'redux/thunk';
 
 export default function ContactForm() {

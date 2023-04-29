@@ -26,7 +26,7 @@ const handleFulfilled = state => {
 };
 
 const handelFulfilledGet = (state, { payload }) => {
-  state.contacts = payload;
+  state.items = payload;
 };
 const handelFulfilledCreate = (state, { payload }) => {
   state.items.push(payload);

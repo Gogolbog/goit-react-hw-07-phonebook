@@ -3,7 +3,6 @@ import axios from 'axios';
 
 // import { createContact, deleteContact, getContacts } from './contactsAPI';
 
-axios.defaults.baseURL = 'https://64491776b88a78a8f0fd24b7.mockapi.io';
 // export const getContactsThunk = createAsyncThunk(
 //   'contacts/get',
 //   () => getContacts
@@ -15,6 +14,13 @@ axios.defaults.baseURL = 'https://64491776b88a78a8f0fd24b7.mockapi.io';
 // export const deleteContactsThunk = createAsyncThunk('contacts/delete', id =>
 //   deleteContact(id)
 // );
+
+axios.defaults.baseURL = 'https://64491776b88a78a8f0fd24b7.mockapi.io';
+
+axios.interceptors.request.use(request => {
+  return request;
+});
+
 export const getContactsThunk = createAsyncThunk('contacts/get', async () => {
   const { data } = await axios.get('/contacts');
   return data;
